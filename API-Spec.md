@@ -6,7 +6,7 @@ This is a proposal for ~~
 
 
 ### Create ToDo (POST)
-`POST /ToDo`
+`POST /toDo`
 
 Request Body: 
 ```
@@ -30,7 +30,7 @@ Response Code: 201 Created
 --- 
 
 ### Fetch ToDo (GET)
-`GET /ToDo/{id}`
+`GET /toDo/{id}`
 
 Response Body:
 ```
@@ -45,7 +45,7 @@ Response Code: 200 OK
 
 
 ### Update ToDo (PUT)
-`PUT /ToDo/{id}`
+`PUT /toDo/{id}`
 
 Request Body:
 ```
@@ -69,7 +69,7 @@ Response Code: 200 OK
 
 
 ### Delete ToDo (DELETE)
-`DELETE /ToDo/{id}`
+`DELETE /toDo/{id}`
 
 Response Body:
 ```
@@ -79,7 +79,7 @@ Response Code: 200 OK
 
 
 ### Fetch All
-`GET /ToDo/{id}`
+`GET /toDo/`
 
 Response Body:
 ```
