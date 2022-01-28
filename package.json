@@ -1,0 +1,27 @@
+{
+  "name": "thehapiexperiment",
+  "version": "1.0.0",
+  "description": "Getting started with Hapi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bootstrap.js"
+  },
+  "keywords": [],
+  "author": "Nicholas Grebe",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@hapi/hapi": "^20.2.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "hapi": "^18.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/ne-grebe/ToDo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ne-grebe/ToDo/issues"
+  },
+  "homepage": "https://github.com/ne-grebe/ToDo#readme"
+}
