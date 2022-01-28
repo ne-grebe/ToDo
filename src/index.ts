@@ -1,3 +1,4 @@
+import { Server, Request, ResponseToolkit } from "@hapi/hapi";
 'use strict';
 
 const Hapi = require('@hapi/hapi');
@@ -12,7 +13,7 @@ const init = async () => {
     server.route({
         method: 'GET',
         path: '/',
-        handler: (request, h) => {
+        handler: (request: Request, h: ResponseToolkit) => {
 
             return 'Hello World!';
         }
