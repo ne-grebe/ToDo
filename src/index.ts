@@ -13,15 +13,6 @@ const init = async () => {
 
     server.route(routes);
 
-    // server.route({
-    //     method: 'GET',
-    //     path: '/',
-    //     handler: (request: Request, h: ResponseToolkit) => {
-
-    //         return 'Hello World!';
-    //     }
-    // });
-
     await server.start();
     console.log('Server running on %s', server.info.uri);
 };

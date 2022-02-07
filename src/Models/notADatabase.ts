@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 
-
 export class OneDumbDatabase {
     name: string;
     createdAt: Date;
@@ -25,9 +24,7 @@ export class OneDumbDatabase {
             "dueDate": (this.dueDate).toString(),
             "completedStatus": this.completedStatus,
         }
-
         return todoTasks.push(task)
-
     }
 }
 
