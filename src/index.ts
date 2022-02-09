@@ -1,5 +1,5 @@
 import { Server, Request, ResponseToolkit } from "@hapi/hapi";
-import { routes } from './Routes/todos';
+import { routes } from './Routes/todoRoutes';
 'use strict';
 
 const Hapi = require('@hapi/hapi');

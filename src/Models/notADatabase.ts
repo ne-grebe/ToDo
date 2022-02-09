@@ -1,12 +1,15 @@
+import { RandomUUIDOptions } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
-export class OneDumbDatabase {
+export class TaskGenerator {
+    id: RandomUUIDOptions
     name: string;
     createdAt: Date;
     dueDate: Date;
     completedStatus: boolean;
 
     constructor(name, createdAt, dueDate, completedStatus) {
+        this.id = uuidv4()
         this.name = name
         this.createdAt = createdAt
         this.dueDate = dueDate
@@ -16,7 +19,7 @@ export class OneDumbDatabase {
     /**
      * creates the task object then adds it to all tasks
      */
-    public addToTasks() {
+    public createTask() {
         let task = {
             "id": (uuidv4()).toString(),
             "name": (this.name).toString(),
@@ -24,7 +27,7 @@ export class OneDumbDatabase {
             "dueDate": (this.dueDate).toString(),
             "completedStatus": this.completedStatus,
         }
-        return todoTasks.push(task)
+        return (task)
     }
 }
 
