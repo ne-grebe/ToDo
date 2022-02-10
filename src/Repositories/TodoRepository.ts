@@ -2,6 +2,7 @@ import { RandomUUIDOptions } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { todoTasks } from "../Models/tempDataStore"
 
+//definition for each task (todo) object
 export interface Todo {
     id: string
     name: string
@@ -9,27 +10,30 @@ export interface Todo {
     dueDate: string
     completedStatus: boolean
 }
-export interface RepositoryPI<T> {
 
+//interface to implement repository pattern
+export interface RepositoryPI<T> {
     add(objectToAdd: T);
     getAll();
     getById(objectID: string);
     getByCompletionStatus(completedStatus: boolean);
     remove(objectToDelete: string);
     update(objectToChange: string);
-
 }
 
+/** 
+ * The Todo Repository class implements all the standard repository pattern functions per the interface above
+ * It will create a task array which contains the full list of todo tasks
+ * should handle all the logic internally so the routes are abstracted to the basics of what it needs to know 
+ * **/
 export class TodoRepository implements RepositoryPI<Todo> {
     private taskArray: Todo[] = [];
 
     constructor() {
     }
 
-    /**
-     * creates the task object then adds it to all tasks
-     */
     public add(task: Todo) {
+        //creates the task object then adds it to all tasks
         this.taskArray.push(task)
         return this.taskArray
     }

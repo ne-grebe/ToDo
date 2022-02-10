@@ -1,36 +1,5 @@
-import { RandomUUIDOptions } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
 
-// export class TaskGenerator {
-//     id: RandomUUIDOptions
-//     name: string;
-//     createdAt: Date;
-//     dueDate: Date;
-//     completedStatus: boolean;
-
-//     constructor(name, createdAt, dueDate, completedStatus) {
-//         this.id = uuidv4()
-//         this.name = name
-//         this.createdAt = createdAt
-//         this.dueDate = dueDate
-//         this.completedStatus =  completedStatus
-//     }
-
-//     /**
-//      * creates the task object then adds it to all tasks
-//      */
-//     public createTask() {
-//         let task = {
-//             "id": (uuidv4()).toString(),
-//             "name": (this.name).toString(),
-//             "createdAt": (this.createdAt).toString(),
-//             "dueDate": (this.dueDate).toString(),
-//             "completedStatus": this.completedStatus,
-//         }
-//         return (task)
-//     }
-// }
-
+//Keeping for the moment for reference, but currently unutilized and on the chopping block
 export const todoTasks = [
     {
         "id": "974cc50e-dd80-46ec-bfab-d0226eefa294",

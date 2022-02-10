@@ -1,27 +1,8 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import { todoTasks } from "../Models/tempDataStore"
 import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoRepository";
 import { v4 as uuidv4 } from 'uuid';
 
 const Joi = require('joi');
-
-//Below are the hacky creations of a few tasks to be hard coded into the routes... for now
-const date = new Date();
-const userTodo = 'Making my way downtown';
-
-var data = {
-    "name": userTodo,
-    "createdAt": date,
-    "dueDate": new Date(2022, 4, 15, 13, 30, 0),
-    "completedStatus": false
-}
-
-var bummyDummy = {
-    "name": 'Buy little baby Cynthia those small booties that her mom wanted',
-    "createdAt": date,
-    "dueDate": new Date(2022, 6, 5, 18, 0, 0),
-    "completedStatus": false
-}
 
 export const routes = [
 
@@ -36,12 +17,12 @@ export const routes = [
                 id: uuidv4(),
                 name: payload['name'],
                 createdAt: new Date(),
-                dueDate: payload['name'],
+                dueDate: payload['dueDate'],
                 completedStatus: false
             }      
 
+            //add todo task to the full list of todos, then return the created todo
             todosRepo.add(todo)
-
             return todo
         },
     },
@@ -63,8 +44,6 @@ export const routes = [
             //first fetch all url parameters then search through task array for id match
             const urlParams = request.params
             const todo = todosRepo.getById(urlParams['id'])
-            // const requestedTask = todoTasks.find(x => x.id === urlParams['id']);
-            // var task = new TaskGenerator(requestedTask.name, requestedTask.createdAt, requestedTask.dueDate, requestedTask.completedStatus) 
 
             return todo;
         }
