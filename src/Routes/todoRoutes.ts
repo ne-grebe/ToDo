@@ -1,11 +1,11 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import { TaskGenerator, todoTasks } from "../Models/notADatabase"
-import { OneDumbDatabase } from "../Repositories/TodoRepository";
+import { todoTasks } from "../Models/tempDataStore"
+import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoRepository";
+import { v4 as uuidv4 } from 'uuid';
 
 const Joi = require('joi');
 
 //Below are the hacky creations of a few tasks to be hard coded into the routes... for now
-const dummyDatabase = new OneDumbDatabase(todoTasks);
 const date = new Date();
 const userTodo = 'Making my way downtown';
 
@@ -30,12 +30,19 @@ export const routes = [
         method: 'POST',
         path: '/todos',
         handler: (request: Request, h: ResponseToolkit) => {
-            var newTask = new TaskGenerator(bummyDummy.name, bummyDummy.createdAt, bummyDummy.dueDate, bummyDummy.completedStatus)
+            var payload = request.payload
+            console.log(payload)
+            const todo: Todo = {
+                id: uuidv4(),
+                name: payload['name'],
+                createdAt: new Date(),
+                dueDate: payload['name'],
+                completedStatus: false
+            }      
 
-            //after initializing a new task dictionary, this function pushes it to the list
-            dummyDatabase.add(newTask)
+            todosRepo.add(todo)
 
-            return todoTasks
+            return todo
         },
     },
 
@@ -44,7 +51,7 @@ export const routes = [
         method: 'GET',
         path: '/todos',
         handler: (request: Request, h: ResponseToolkit) => {
-            return dummyDatabase.getAll()
+            return todosRepo.getAll()
         }
     },
 
@@ -55,12 +62,11 @@ export const routes = [
         handler: (request: Request, h: ResponseToolkit) => {
             //first fetch all url parameters then search through task array for id match
             const urlParams = request.params
-            const requestedTask = todoTasks.find(x => x.id === urlParams['id']);
-            var task = new TaskGenerator(requestedTask.name, requestedTask.createdAt, requestedTask.dueDate, requestedTask.completedStatus)
+            const todo = todosRepo.getById(urlParams['id'])
+            // const requestedTask = todoTasks.find(x => x.id === urlParams['id']);
+            // var task = new TaskGenerator(requestedTask.name, requestedTask.createdAt, requestedTask.dueDate, requestedTask.completedStatus) 
 
-            dummyDatabase.getById(task)
-
-            return requestedTask;
+            return todo;
         }
     },
 
@@ -69,20 +75,14 @@ export const routes = [
         method: 'GET',
         path: '/todos/completed',
         handler: (request: Request, h: ResponseToolkit) => {
-            //first fetch all url parameters then search through task array for status match
-            const urlParams = request.params
-
-            return dummyDatabase.getByCompletionStatus(true)
+            return todosRepo.getByCompletionStatus(true)
         }
     },
     {
         method: 'GET',
         path: '/todos/incomplete',
         handler: (request: Request, h: ResponseToolkit) => {
-            //first fetch all url parameters then search through task array for status match
-            const urlParams = request.params
-            
-            return dummyDatabase.getByCompletionStatus(false)
+            return todosRepo.getByCompletionStatus(false)
         }
     },
 
@@ -93,10 +93,10 @@ export const routes = [
         handler: (request: Request, h: ResponseToolkit) => {
             //first fetch all url parameters then search through task array for id match
             const urlParams = request.params
-            const requestedTask = todoTasks.find(x => x.id === urlParams['id']);
+            const requestedTask = todosRepo.update(urlParams['id']);
             console.log(requestedTask)
 
-            return dummyDatabase.update(requestedTask)
+            return requestedTask
         }
     },
 
@@ -107,9 +107,9 @@ export const routes = [
         handler: (request: Request, h: ResponseToolkit) => {
             //first fetch all url parameters then search through task array for id match
             const urlParams = request.params
-            const requestedTask = todoTasks.find(x => x.id === urlParams['id']);
+            const requestedTask = todosRepo.remove(urlParams['id']);
 
-            return dummyDatabase.remove(requestedTask)
+            return requestedTask
         }
     }
 ]

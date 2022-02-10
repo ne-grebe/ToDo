@@ -1,33 +1,35 @@
+import { RandomUUIDOptions } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { TaskGenerator, todoTasks } from "../Models/notADatabase"
-import { RepositoryPI } from './RepositoryPatternInterface';
+import { todoTasks } from "../Models/tempDataStore"
 
-export class OneDumbDatabase implements RepositoryPI<TaskGenerator> {
-    taskArray: TaskGenerator[] = [];
-    // name: string;
-    // createdAt: Date;
-    // dueDate: Date;
-    // completedStatus: boolean;
+export interface Todo {
+    id: string
+    name: string
+    createdAt: Date
+    dueDate: string
+    completedStatus: boolean
+}
+export interface RepositoryPI<T> {
 
-    constructor(taskArray) {
-        // this.name = name
-        // this.createdAt = createdAt
-        // this.dueDate = dueDate
-        // this.completedStatus = completedStatus
-        this.taskArray = taskArray;
+    add(objectToAdd: T);
+    getAll();
+    getById(objectID: string);
+    getByCompletionStatus(completedStatus: boolean);
+    remove(objectToDelete: string);
+    update(objectToChange: string);
+
+}
+
+export class TodoRepository implements RepositoryPI<Todo> {
+    private taskArray: Todo[] = [];
+
+    constructor() {
     }
 
     /**
      * creates the task object then adds it to all tasks
      */
-    public add(task: any) {
-        // let task = {
-        //     "id": (uuidv4()).toString(),
-        //     "name": (this.name).toString(),
-        //     "createdAt": (this.createdAt).toString(),
-        //     "dueDate": (this.dueDate).toString(),
-        //     "completedStatus": this.completedStatus,
-        // }
+    public add(task: Todo) {
         this.taskArray.push(task)
         return this.taskArray
     }
@@ -36,44 +38,48 @@ export class OneDumbDatabase implements RepositoryPI<TaskGenerator> {
         return this.taskArray;
     }
 
-    public getById(requestedTask: any) {
-        return requestedTask;
+    public getById(todoID: string) {
+        const requestedTask = this.taskArray.filter(x => x.id === todoID);
+
+        return requestedTask[0];
     }
 
-    public getByCompletionStatus(completedStatus: boolean) {
+    public getByCompletionStatus(completedStatus: boolean): Todo[] {
         //first fetch all url parameters then search through task array for status match
-        const filteredList = this.taskArray.filter(function(value, index, arr) {
-            //checks per item in array that it matches the status to add tasks in new array
-            return value.completedStatus == completedStatus;
-        });
+        const filteredList = this.taskArray.filter(todo => todo.completedStatus == completedStatus);
 
         return filteredList;
     }
 
-    public remove(requestedTask: any) {
+    public remove(todoID: string) {
         /** 
-             * search array for matching id value and then creates a new array with all other elements; 
-             * as task array grows to dozens or hundreds of tasks, may want to consider how else to
-             * remove a specific element without having to create new array
-             **/
-         const filteredList = todoTasks.filter(function(value, index, arr) {
-            console.log(value)
-            return value != requestedTask;
-        });
+        * search array for matching id value and then creates a new array with all other elements; 
+        * as task array grows to dozens or hundreds of tasks, may want to consider how else to
+        * remove a specific element without having to create new array
+        **/
 
-        return filteredList;
+        const filteredTodos = this.taskArray.filter(todo => todo.id === todoID)
+        const todoToBeDeleted = filteredTodos[0]
+        const position = filteredTodos.indexOf(todoToBeDeleted)
+
+        this.taskArray.splice(position, 1)
+        return todoToBeDeleted
     }
 
-    public update(requestedTask: any) {
+    public update(todoID: string) {
         /**
              * Currently implementing hard coded update for 'Marrying the queen' task
              * But if id is changed, will update whatever task that was, regardless
              **/
-         requestedTask.name = 'Divorce the queen'
-         requestedTask.dueDate = (new Date(2023, 6, 5, 18, 0, 0)).toString()
-         requestedTask.completedStatus = true
+         const requestedTask = this.taskArray.filter(x => x.id === todoID);
+
+         requestedTask[0].name = 'Divorce the queen'
+         requestedTask[0].dueDate = (new Date(2023, 6, 5, 18, 0, 0)).toString()
+         requestedTask[0].completedStatus = true
 
          console.log(requestedTask)
          return requestedTask;
     }
 }
+
+export const todosRepo = new TodoRepository()
