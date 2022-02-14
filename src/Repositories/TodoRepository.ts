@@ -17,8 +17,8 @@ export interface RepositoryPI<T> {
     getAll();
     getById(objectID: string);
     getByCompletionStatus(completedStatus: boolean);
-    remove(objectToDelete: string);
-    update(objectToChange: string);
+    remove(objectID: string);
+    update(objectID: string, objectToChange: T);
 }
 
 /** 
@@ -64,25 +64,27 @@ export class TodoRepository implements RepositoryPI<Todo> {
 
         const filteredTodos = this.taskArray.filter(todo => todo.id === todoID)
         const todoToBeDeleted = filteredTodos[0]
-        const position = filteredTodos.indexOf(todoToBeDeleted)
+        const position = this.taskArray.indexOf(todoToBeDeleted)
 
         this.taskArray.splice(position, 1)
-        return todoToBeDeleted
+        return this.taskArray
     }
 
-    public update(todoID: string) {
+    public update(todoID: string, updatePayload: Todo) {
         /**
              * Currently implementing hard coded update for 'Marrying the queen' task
              * But if id is changed, will update whatever task that was, regardless
              **/
-         const requestedTask = this.taskArray.filter(x => x.id === todoID);
+        const requestedTask = this.taskArray.filter(x => x.id === todoID);
 
-         requestedTask[0].name = 'Divorce the queen'
-         requestedTask[0].dueDate = (new Date(2023, 6, 5, 18, 0, 0)).toString()
-         requestedTask[0].completedStatus = true
+        let updatedTask: Todo = {
+            ...requestedTask[0], ...updatePayload
+        }
 
-         console.log(requestedTask)
-         return requestedTask;
+        const position = this.taskArray.indexOf(requestedTask[0])
+        this.taskArray[position] = updatedTask
+
+        return updatedTask;
     }
 }
 

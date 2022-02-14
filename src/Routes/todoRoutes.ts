@@ -12,13 +12,12 @@ export const routes = [
         path: '/todos',
         handler: (request: Request, h: ResponseToolkit) => {
             var payload = request.payload
-            console.log(payload)
-            const todo: Todo = {
+            var creationDetails = { 
                 id: uuidv4(),
-                name: payload['name'],
-                createdAt: new Date(),
-                dueDate: payload['dueDate'],
-                completedStatus: false
+                createdAt: new Date()
+            }
+            const todo: Todo = {
+                ...creationDetails, ...payload as Todo
             }      
 
             //add todo task to the full list of todos, then return the created todo
@@ -72,8 +71,8 @@ export const routes = [
         handler: (request: Request, h: ResponseToolkit) => {
             //first fetch all url parameters then search through task array for id match
             const urlParams = request.params
-            const requestedTask = todosRepo.update(urlParams['id']);
-            console.log(requestedTask)
+            const payload = request.payload
+            const requestedTask = todosRepo.update(urlParams['id'], (payload as object) as Todo);
 
             return requestedTask
         }
