@@ -7,13 +7,13 @@ This is a proposal for probably a stellar API just you wait
 ### Create ToDo (POST)
 Attempt to create a ToDo
 
-`POST /todo`
+`POST /todos`
 
 Request Body: 
 ```
     {
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -25,7 +25,7 @@ Response Body:
     {
         "id": "GUID",
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -40,7 +40,7 @@ Response Body:
 --- 
 
 ### Fetch ToDo (GET)
-`GET /todo/{id}`
+`GET /todos/{id}`
 
 Response Code: 200 OK
 Response Body:
@@ -48,7 +48,7 @@ Response Body:
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -61,14 +61,14 @@ Response Body:
 ```
 
 ### Update ToDo (PUT)
-`PUT /todo/{id}`
+`PUT /todos/{id}`
 
 Request Body:
 ```
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -80,7 +80,7 @@ Response Body:
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -93,7 +93,7 @@ Response Body:
 ```
 
 ### Delete ToDo (DELETE)
-`DELETE /todo/{id}`
+`DELETE /todos/{id}`
 
 Response Code: 200 OK
 Response Body:
@@ -107,7 +107,7 @@ Response Body:
 ```
 
 ### Fetch All
-`GET /todo`
+`GET /todos`
 
 Response Code: 200 OK
 Response Body:
@@ -116,35 +116,35 @@ Response Body:
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -158,12 +158,10 @@ Response Body:
 ```
 
 ### Fetch Finished ToDo (GET)
-`GET /todo/{id}`
+`GET /todos/completed`
 
 parameters:
 ```
-      completedStatus: true
-        Required
       sort_by: dueDate 
         Optional
       order_by: asc
@@ -177,14 +175,14 @@ Response Body:
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
@@ -198,12 +196,10 @@ Response Body:
 ```
 
 ### Fetch Incomplete ToDo (GET)
-`GET /todo/{id}`
+`GET /todos/incomplete`
 
 parameters:
 ```
-      completedStatus: false
-        Required
       sort_by: dueDate 
         Optional
       order_by: desc
@@ -216,21 +212,21 @@ Response Body:
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": "String",
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     },
     {
         "id": "GUID"
         "name": String,
-        "createdAt": "Datetime",
+        "createdAt": "DateTime",
         "dueDate": "Date",
         "completedStatus": Bool
     }
