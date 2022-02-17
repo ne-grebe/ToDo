@@ -1,4 +1,5 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
+// import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoArrayRepository";
 import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoRepository";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -19,18 +20,18 @@ export const routes = [
             const todo: Todo = {
                 ...creationDetails, ...payload as Todo
             }      
-
+ 
             //add todo task to the full list of todos, then return the created todo
             todosRepo.add(todo)
             return todo
-        },
+        }, 
     },
 
     //Fetch full list of tasks (in the order they were pushed to the array)
     {
         method: 'GET',
         path: '/todos',
-        handler: (request: Request, h: ResponseToolkit) => {
+        handler: async (request: Request, h: ResponseToolkit) => {
             return todosRepo.getAll()
         }
     },

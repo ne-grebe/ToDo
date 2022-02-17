@@ -1,6 +1,4 @@
-import { RandomUUIDOptions } from 'crypto';
-import { v4 as uuidv4 } from 'uuid';
-import { todoTasks } from "../Models/tempDataStore"
+const Connection = require("../DatabaseConfig/sequelizeConnection")
 
 //definition for each task (todo) object
 export interface Todo {
@@ -13,12 +11,12 @@ export interface Todo {
 
 //interface to implement repository pattern
 export interface RepositoryPI<T> {
-    add(objectToAdd: T);
+    add(todoToAdd: T);
     getAll();
-    getById(objectID: string);
+    getById(todoID: string);
     getByCompletionStatus(completedStatus: boolean);
-    remove(objectID: string);
-    update(objectID: string, objectToChange: T);
+    remove(todoID: string);
+    update(todoID: string, todoToChange: T);
 }
 
 /** 
@@ -26,66 +24,40 @@ export interface RepositoryPI<T> {
  * It will create a task array which contains the full list of todo tasks
  * should handle all the logic internally so the routes are abstracted to the basics of what it needs to know 
  * **/
-export class TodoRepository implements RepositoryPI<Todo> {
-    private taskArray: Todo[] = [];
+ export class TodoRepository implements RepositoryPI<Todo> {
 
     constructor() {
     }
 
-    public add(task: Todo) {
-        //creates the task object then adds it to all tasks
-        this.taskArray.push(task)
-        return this.taskArray
+    async add(todoToAdd: Todo) {
+        const addedTodo = Connection.addToDatabase(todoToAdd);
+        return addedTodo
     }
 
-    public getAll() {
-        return this.taskArray;
+    async getAll() { 
+        const allTodos = Connection.getTodos();
+        return allTodos
     }
 
-    public getById(todoID: string) {
-        const requestedTask = this.taskArray.filter(x => x.id === todoID);
+    async getById(todoID: string) {
+        const todoOfID = Connection.getTodoOfID(todoID)
+        return todoOfID
+    } 
 
-        return requestedTask[0];
+    async getByCompletionStatus(completedStatus: boolean) {
+        const todosOfCompletionStatusOf = Connection.getTodosOfCompletionState(completedStatus)
+        return todosOfCompletionStatusOf
     }
 
-    public getByCompletionStatus(completedStatus: boolean): Todo[] {
-        //first fetch all url parameters then search through task array for status match
-        const filteredList = this.taskArray.filter(todo => todo.completedStatus == completedStatus);
-
-        return filteredList;
+    async update(todoID: string, todoToChange: Todo) {
+        const updatedTodo = Connection.updateTodo(todoID, todoToChange)
+        return updatedTodo
     }
 
-    public remove(todoID: string) {
-        /** 
-        * search array for matching id value and then creates a new array with all other elements; 
-        * as task array grows to dozens or hundreds of tasks, may want to consider how else to
-        * remove a specific element without having to create new array
-        **/
-
-        const filteredTodos = this.taskArray.filter(todo => todo.id === todoID)
-        const todoToBeDeleted = filteredTodos[0]
-        const position = this.taskArray.indexOf(todoToBeDeleted)
-
-        this.taskArray.splice(position, 1)
-        return this.taskArray
+    async remove(todoID: string) {
+        const postTodoRemovalList = Connection.deleteTodo(todoID)
+        return postTodoRemovalList
     }
-
-    public update(todoID: string, updatePayload: Todo) {
-        /**
-             * Currently implementing hard coded update for 'Marrying the queen' task
-             * But if id is changed, will update whatever task that was, regardless
-             **/
-        const requestedTask = this.taskArray.filter(x => x.id === todoID);
-
-        let updatedTask: Todo = {
-            ...requestedTask[0], ...updatePayload
-        }
-
-        const position = this.taskArray.indexOf(requestedTask[0])
-        this.taskArray[position] = updatedTask
-
-        return updatedTask;
-    }
+    
 }
-
 export const todosRepo = new TodoRepository()
