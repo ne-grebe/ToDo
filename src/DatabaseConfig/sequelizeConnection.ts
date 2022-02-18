@@ -1,5 +1,5 @@
 import { todoTasks } from "../Models/tempDataStore";
-import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoRepository";
+import { Todo} from "../Repositories/TodoRepository";
 
 const Sequelize = require('sequelize');
 
@@ -36,6 +36,7 @@ module.exports.addToDatabase = async function(todoToAdd) {
 }
 
 module.exports.getTodos = async function() {
+    //Return all todo tasks from the 'Todos' table
     const [results, metadata] = await connection.query(
         `
         SELECT * 
@@ -45,6 +46,7 @@ module.exports.getTodos = async function() {
 }
 
 module.exports.getTodoOfID = async function(todoID) {
+    //Return a specific todo of id todoID from the 'Todos' table
     const [results, metadata] = await connection.query(
         `
         SELECT * 
@@ -55,6 +57,7 @@ module.exports.getTodoOfID = async function(todoID) {
 }
 
 module.exports.getTodosOfCompletionState = async function(completedStatus) {
+    //to follow the bit convention in mysql, will determine either 1(true) or 0(false)
     var placeholderBool
 
     if (completedStatus) {
@@ -64,6 +67,7 @@ module.exports.getTodosOfCompletionState = async function(completedStatus) {
         placeholderBool = 0
     }
     
+    //will find and return all todos with the same bit value as determined above
     const [results, metadata] = await connection.query(
         `
         SELECT * 
@@ -75,6 +79,7 @@ module.exports.getTodosOfCompletionState = async function(completedStatus) {
 
 module.exports.updateTodo = async function(todoID, todoToChange) {
     var placeholderBool
+    // find the singular todo to be updated
     const [requestedTask, taskMetadata] = await connection.query(
         `
         SELECT * 
@@ -82,6 +87,11 @@ module.exports.updateTodo = async function(todoID, todoToChange) {
         WHERE todo_id = "${todoID}"
         `)
 
+    /** 
+     * as the syntax of the sql columns are different than the todo keys,
+     * here, the sql row that was found above lays a blueprint to make
+     * a new todo so that the updated todo task created has no superfluous keys
+     */
     let oldTodoKeys: Todo = {
         id: todoID,
         name: requestedTask[0].todo_name,
@@ -93,6 +103,7 @@ module.exports.updateTodo = async function(todoID, todoToChange) {
         ...oldTodoKeys, ...todoToChange
     }
 
+    //check for sql bit value
     if (updatedTask.completedStatus) {
         placeholderBool = 1
     }
@@ -100,6 +111,7 @@ module.exports.updateTodo = async function(todoID, todoToChange) {
         placeholderBool = 0
     }
 
+    //finally, the actual update query
     const [results, metadata] = await connection.query(
         `
         UPDATE Todos 
@@ -109,22 +121,23 @@ module.exports.updateTodo = async function(todoID, todoToChange) {
         todo_completed_status = ${placeholderBool} 
         WHERE Todos.todo_id = '${todoID}'
         ;`)
-    console.log(updatedTask)
+    //unlike other queries, instead of results here, we want the updated todo
     return updatedTask
 }
 
 module.exports.deleteTodo = async function(todoID) {
+    //query to remove the row with the primary key of todoID
     const [results, metadata] = await connection.query(
         `
         DELETE FROM Todos 
         WHERE Todos.todo_id = '${todoID}'
         `)
 
+    //fetch the remaining todos, excluding the one deleted above
     const [remainingTodos, allMetadata] = await connection.query(
         `
         SELECT * 
         FROM Todos
         `)
-        
     return remainingTodos
 }

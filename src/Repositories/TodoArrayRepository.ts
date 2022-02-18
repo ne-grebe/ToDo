@@ -2,6 +2,14 @@ import { RandomUUIDOptions } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { todoTasks } from "../Models/tempDataStore"
 
+/**
+ * This file has been rendered obsolete.
+ * The 'TodoRepository' and 'SequelizeConnection' files replaced
+ * the functionality for this 'TodoArrayRepository' file.
+ * Kept for reference for the time being;
+ * remove before final.
+ */
+
 //definition for each task (todo) object
 export interface Todo {
     id: string

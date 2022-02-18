@@ -21,10 +21,14 @@ export interface RepositoryPI<T> {
 
 /** 
  * The Todo Repository class implements all the standard repository pattern functions per the interface above
- * It will create a task array which contains the full list of todo tasks
  * should handle all the logic internally so the routes are abstracted to the basics of what it needs to know 
  * **/
  export class TodoRepository implements RepositoryPI<Todo> {
+     /**
+      * This class has a series of functions called in the todoRoutes.
+      * Most will invoke the sequelize connection where they each have an 
+      * associated function that calls a query or multiple queries 
+      */
 
     constructor() {
     }
@@ -45,8 +49,8 @@ export interface RepositoryPI<T> {
     } 
 
     async getByCompletionStatus(completedStatus: boolean) {
-        const todosOfCompletionStatusOf = Connection.getTodosOfCompletionState(completedStatus)
-        return todosOfCompletionStatusOf
+        const todosWithCompletionStatusOf = Connection.getTodosOfCompletionState(completedStatus)
+        return todosWithCompletionStatusOf
     }
 
     async update(todoID: string, todoToChange: Todo) {
