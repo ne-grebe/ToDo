@@ -28,6 +28,7 @@ export interface RepositoryPI<T> {
       * This class has a series of functions called in the todoRoutes.
       * Most will invoke the sequelize connection where they each have an 
       * associated function that calls a query or multiple queries 
+      * these function will then return a todo or an array of all remaining todos
       */
 
     constructor() {
@@ -62,6 +63,5 @@ export interface RepositoryPI<T> {
         const postTodoRemovalList = Connection.deleteTodo(todoID)
         return postTodoRemovalList
     }
-    
 }
 export const todosRepo = new TodoRepository()
