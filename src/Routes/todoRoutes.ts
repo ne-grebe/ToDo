@@ -1,5 +1,5 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoRepository";
+import { Todo, todosRepo } from "../Repositories/TodoRepository";
 import { v4 as uuidv4 } from 'uuid';
 
 const Joi = require('joi');

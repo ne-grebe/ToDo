@@ -1,17 +1,4 @@
-const Sequelize = require('sequelize');
-
-//creates a connection to the 'mysql' database with the root user and password 'supersecretpass'
-export const connection = new Sequelize('mysql', 'root', 'supersecretpass', {
-    host: 'localhost',
-    port: 13306,
-    dialect: 'mysql'
-})
-
-connection.authenticate().then(() => {
-    console.log("Connected!");
-}).catch(() => {
-    console.log("Not connected yet.")
-})
+const instance = require('hapi-sequelizejs').instances;
 
 //definition for each task (todo) object
 export interface Todo {
@@ -43,7 +30,6 @@ export interface RepositoryPI<T> {
       * associated function that calls a query or multiple queries 
       * these function will then return a todo or an array of all remaining todos
       */
-
     constructor() {
     }
 
@@ -52,7 +38,7 @@ export interface RepositoryPI<T> {
          * Complete status is always 0 upon creation
          * indicating someone would NOT make a todo if it was already complete
          **/
-        const [results, metadata] = await connection.query(
+        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
             `
             INSERT INTO 
                 Todos 
@@ -68,7 +54,7 @@ export interface RepositoryPI<T> {
 
     async getAll() { 
         //Return all todo tasks from the 'Todos' table
-        const [results, metadata] = await connection.query(
+        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
             `
             SELECT * 
             FROM Todos
@@ -78,7 +64,7 @@ export interface RepositoryPI<T> {
 
     async getById(todoID: string) {
         //Return a specific todo of id todoID from the 'Todos' table
-        const [results, metadata] = await connection.query(
+        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
             `
             SELECT * 
             FROM Todos 
@@ -99,7 +85,7 @@ export interface RepositoryPI<T> {
         }
         
         //will find and return all todos with the same bit value as determined above
-        const [results, metadata] = await connection.query(
+        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
             `
             SELECT * 
             FROM Todos 
@@ -111,7 +97,7 @@ export interface RepositoryPI<T> {
     async update(todoID: string, todoToChange: Todo) {
         var placeholderBool
         // find the singular todo to be updated
-        const [requestedTask, taskMetadata] = await connection.query(
+        const [requestedTask, taskMetadata] = await instance.dbs.todoDB.sequelize.query(
             `
             SELECT * 
             FROM Todos 
@@ -143,7 +129,7 @@ export interface RepositoryPI<T> {
         }
 
         //finally, the actual update query
-        const [results, metadata] = await connection.query(
+        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
             `
             UPDATE Todos 
             SET 
@@ -158,14 +144,14 @@ export interface RepositoryPI<T> {
 
     async remove(todoID: string) {
         //query to remove the row with the primary key of todoID
-        const [results, metadata] = await connection.query(
+        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
             `
             DELETE FROM Todos 
             WHERE Todos.todo_id = '${todoID}'
             `)
 
         //fetch the remaining todos, excluding the one deleted above
-        const [remainingTodos, allMetadata] = await connection.query(
+        const [remainingTodos, allMetadata] = await instance.dbs.todoDB.sequelize.query(
             `
             SELECT * 
             FROM Todos
