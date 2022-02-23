@@ -1,5 +1,5 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import { Todo, TodoRepository, todosRepo } from "../Repositories/TodoRepository";
+import { Todo, todosRepo } from "../Repositories/TodoRepository";
 import { v4 as uuidv4 } from 'uuid';
 
 const Joi = require('joi');
@@ -19,7 +19,7 @@ export const routes = [
             const todo: Todo = {
                 ...creationDetails, ...payload as Todo
             }      
-
+ 
             //add todo task to the full list of todos, then return the created todo
             todosRepo.add(todo)
             return todo
@@ -30,7 +30,7 @@ export const routes = [
     {
         method: 'GET',
         path: '/todos',
-        handler: (request: Request, h: ResponseToolkit) => {
+        handler: async (request: Request, h: ResponseToolkit) => {
             return todosRepo.getAll()
         }
     },
