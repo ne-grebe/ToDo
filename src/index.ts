@@ -1,6 +1,7 @@
 import { Server, Request, ResponseToolkit } from "@hapi/hapi";
 import { routes } from './Routes/todoRoutes';
 const Sequelize = require('sequelize');
+const instances = require('./Models/Todos')
 
 'use strict';
 
@@ -20,11 +21,13 @@ const init = async () => {
             options: [
                 {
                     name: 'todoDB',
+                    models: [__dirname + '/Models/Todos'],
                     sequelize: new Sequelize('mysql', 'root', 'supersecretpass', {
                         host: 'localhost',
                         port: 13306,
                         dialect: 'mysql'
                     }),
+                    sync: true,
                 }
             ]
         }
