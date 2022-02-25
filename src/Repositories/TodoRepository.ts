@@ -1,4 +1,4 @@
-const instance = require('hapi-sequelizejs').instances;
+const todoModel = require('../Models/Todos')
 
 //definition for each task (todo) object
 export interface Todo {
@@ -38,71 +38,60 @@ export interface RepositoryPI<T> {
          * Complete status is always 0 upon creation
          * indicating someone would NOT make a todo if it was already complete
          **/
-        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            INSERT INTO 
-                Todos 
-            VALUES (
-                "${todoToAdd.id}", 
-                "${todoToAdd.createdAt}", 
-                "${todoToAdd.name}", 
-                "${todoToAdd.dueDate}", 
-                "0"
-            )`)
-        return results
+        const toQueryToTheDatabase = todoModel.mapModel()
+
+        const newTodo = await toQueryToTheDatabase.create({
+            todo_id: todoToAdd.id,
+            todo_created_at: todoToAdd.createdAt,
+            todo_name: todoToAdd.name,
+            todo_due_date: todoToAdd.dueDate,
+            todo_completed_status: 0
+        })
+
+        console.log (newTodo)
+        return newTodo
     }
 
     async getAll() { 
         //Return all todo tasks from the 'Todos' table
-        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            SELECT * 
-            FROM Todos
-            `)
-        return results
+        const toQueryToTheDatabase = todoModel.mapModel()
+        const allTodos = toQueryToTheDatabase.findAll()
+
+        return allTodos
     }
 
     async getById(todoID: string) {
         //Return a specific todo of id todoID from the 'Todos' table
-        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            SELECT * 
-            FROM Todos 
-            WHERE todo_id = "${todoID}"
-            `)
-        return results
+        const toQueryToTheDatabase = todoModel.mapModel()
+        const requestedTodo = toQueryToTheDatabase.findAll({
+            where: {
+                todo_id: todoID
+            }
+        })
+
+        return requestedTodo
     } 
 
     async getByCompletionStatus(completedStatus: boolean) {
-        //to follow the bit convention in mysql, will determine either 1(true) or 0(false)
-        var placeholderBool
+        //Similar to above, checks from all items in the 'Todos' table which are of the complete status input above
+        const toQueryToTheDatabase = todoModel.mapModel()
+        const filteredTodos = toQueryToTheDatabase.findAll({
+            where: {
+                todo_completed_status: completedStatus
+            }
+        })
 
-        if (completedStatus) {
-            placeholderBool = 1
-        }
-        else {
-            placeholderBool = 0
-        }
-        
-        //will find and return all todos with the same bit value as determined above
-        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            SELECT * 
-            FROM Todos 
-            WHERE todo_completed_status = ${placeholderBool}
-            `)
-        return results
+        return filteredTodos
     }
 
     async update(todoID: string, todoToChange: Todo) {
+        /**
+         * Update will first find the todo of the todo id put in above
+         * Then transform the keys from 
+         */
         var placeholderBool
-        // find the singular todo to be updated
-        const [requestedTask, taskMetadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            SELECT * 
-            FROM Todos 
-            WHERE todo_id = "${todoID}"
-            `)
+        const toQueryToTheDatabase = todoModel.mapModel()
+        const oldTodo = await this.getById(todoID)
 
         /** 
          * as the syntax of the sql columns are different than the todo keys,
@@ -111,10 +100,10 @@ export interface RepositoryPI<T> {
          */
         let oldTodoKeys: Todo = {
             id: todoID,
-            name: requestedTask[0].todo_name,
-            createdAt: requestedTask[0].todo_created_at,
-            dueDate: requestedTask[0].todo_due_date,
-            completedStatus: requestedTask[0].todo_completed_status
+            name: oldTodo[0].todo_name,
+            createdAt: oldTodo[0].todo_created_at,
+            dueDate: oldTodo[0].todo_due_date,
+            completedStatus: oldTodo[0].todo_completed_status
         }
         let updatedTask: Todo = {
             ...oldTodoKeys, ...todoToChange
@@ -128,35 +117,29 @@ export interface RepositoryPI<T> {
             placeholderBool = 0
         }
 
-        //finally, the actual update query
-        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            UPDATE Todos 
-            SET 
-            todo_name = "${updatedTask.name}", 
-            todo_due_date = "${updatedTask.dueDate}",
-            todo_completed_status = ${placeholderBool} 
-            WHERE Todos.todo_id = '${todoID}'
-            ;`)
-        //unlike other queries, instead of results here, we want the updated todo
+        await toQueryToTheDatabase.update({
+            todo_name: updatedTask.name,
+            todo_due_date: updatedTask.dueDate,
+            todo_completed_status: placeholderBool
+        }, {
+            where: {
+                todo_id: todoID
+            }
+        })
+
         return updatedTask
     }
 
     async remove(todoID: string) {
-        //query to remove the row with the primary key of todoID
-        const [results, metadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            DELETE FROM Todos 
-            WHERE Todos.todo_id = '${todoID}'
-            `)
+        const toQueryToTheDatabase = todoModel.mapModel()
 
-        //fetch the remaining todos, excluding the one deleted above
-        const [remainingTodos, allMetadata] = await instance.dbs.todoDB.sequelize.query(
-            `
-            SELECT * 
-            FROM Todos
-            `)
-        return remainingTodos
+        await toQueryToTheDatabase.destroy({
+            where: {
+                todo_id: todoID
+            }
+        })
+
+        return this.getAll()
     }
 }
 export const todosRepo = new TodoRepository()
